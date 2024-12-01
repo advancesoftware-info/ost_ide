@@ -1,11 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Document</title>
+  <meta charset="UTF-8">
+  <title>VSCode-like Editor with Monaco</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Top Bar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #302727;
+      padding: 5px 15px;
+      border-bottom: 1px solid #444;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 200px;
+      background-color: #252526;
+      padding: 10px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar li {
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar li:hover {
+      background-color: #404040;
+    }
+
+    /* Main Editor Area */
+    .editor-container {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    #container {
+      flex: 1;
+      border-top: 1px solid #444;
+    }
+
+    /* Bottom Status Bar */
+    .statusbar {
+      background-color: #007acc;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    button {
+      background-color: #2b3033;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-right: 5px;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .rename-btn {
+      background-color: #ff9800;
+      color: white;
+      border: none;
+      padding: 5px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .rename-btn:hover {
+      background-color: #e68900;
+    }
+  </style>
 </head>
 <body>
-          <h1>hi</h1>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3>Explorer</h3>
+    <ul id="fileList">
+          welcome.asapp
+    </ul>
+  </div>
+
+  <!-- Main Editor Container -->
+  <div class="container">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div id="fileName">!</div>
+      <div>
+        <a href="./index.html" >    <button>mamu</button></a>
+      </div>
+    </div>
+
+    <!-- Monaco Editor -->
+    <div class="editor-container">
+      <div style="text-align: center ; " id="container">
+<h1>
+          welcome
+</h1>
+<p>
+          welcome to ost editor v.1.0.0
+</p>
+<div>
+<a href="./edit.html">          <img src="./img/edit.png" width="199px" height="200px" style="border-radius: 19px;" alt="edit">  </a>
+       </div>
+      </div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <div class="statusbar">
+      <div>Status: ok Plugins: home system , web pro run</div>
+      <div>Language: .asapp</div>
+    </div>
+  </div>
 </body>
 </html>
