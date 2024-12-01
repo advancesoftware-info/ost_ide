@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Monaco Editor with Folder Save and Autosave</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; }
+    #toolbar {
+      display: flex;
+      justify-content: space-between;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    button { margin: 0 5px; padding: 8px 12px; }
+    #fileList {
+      height: 20vh; 
+      overflow-y: scroll; 
+      border: 1px solid #ccc; 
+      margin-top: 5px;
+    }
+    #container {
+      width: 100%; 
+      height: 70vh; 
+      border: 1px solid #ccc; 
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <div>
+      <button id="openFolderBtn">Open Folder</button>
+      <button id="saveBtn">Save File</button>
+    </div>
+    <div id="fileName" style="align-self: center;">No file opened</div>
+  </div>
+  <ul id="fileList"></ul>
+  <div id="container"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.10.1/min/vs/loader.js"></script>
+  <script>
+    let editor;
+    let folderHandle;
+    let currentFileHandle = null;
+
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.10.1/min/vs' } });
+    require(['vs/editor/editor.main'], function() {
+      editor = monaco.editor.create(document.getElementById('container'), {
+        value: '<!-- Start typing your HTML here -->',
+        language: 'html',
+        automaticLayout: true
+      });
+
+      editor.onDidChangeModelContent(() => {  // Trigger autosave on content change
+        if (currentFileHandle) autoSave();
+      });
+    });
+
+    document.getElementById('openFolderBtn').addEventListener('click', async () => {
+      try {
+        folderHandle = await window.showDirectoryPicker();
+        displayFolderContents(folderHandle);
+      } catch (err) {
+        console.error('Error opening folder:', err);
+      }
+    });
+
+    async function displayFolderContents(folderHandle) {
+      const fileList = document.getElementById('fileList');
+      fileList.innerHTML = '';  // Clear previous list
+      
+      for await (const [name, handle] of folderHandle.entries()) {
+        if (handle.kind === 'file') {
+          const listItem = document.createElement('li');
+          listItem.textContent = name;
+          listItem.style.cursor = 'pointer';
+          listItem.addEventListener('click', () => openFile(handle, name));
+          fileList.appendChild(listItem);
+        }
+      }
+    }
+
+    async function openFile(fileHandle, fileName) {
+      try {
+        currentFileHandle = fileHandle;
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        editor.setValue(content);  // Load content into the editor
+        document.getElementById('fileName').textContent = fileName;
+      } catch (err) {
+        console.error('Error reading file:', err);
+      }
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', saveFile);
+
+    async function saveFile() {
+      if (!currentFileHandle) {
+        alert('No file opened to save.');
+        return;
+      }
+      try {
+        const writable = await currentFileHandle.createWritable();
+        await writable.write(editor.getValue());
+        await writable.close();
+        alert('File saved successfully!');
+      } catch (err) {
+        console.error('Error saving file:', err);
+      }
+    }
+
+    async function autoSave() {
+      try {
+        const writable = await currentFileHandle.createWritable();
+        await writable.write(editor.getValue());
+        await writable.close();
+        console.log('Autosave completed');  // Log for autosave
+      } catch (err) {
+        console.error('Error in autosave:', err);
+      }
+    }
+  </script>
+</body>
+</html>
