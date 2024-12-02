@@ -1,6 +1,6 @@
 
-![Logo ost](./ost)
-![Logo](advancesoftware.info/img/icon.png)
+![Logo ost](./ost.png)
+![Logo](http://advancesoftware.info/img/icon.png)
 
  
   # ost
