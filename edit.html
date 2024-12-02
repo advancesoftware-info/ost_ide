@@ -2,42 +2,146 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Monaco Editor with Folder Save and Autosave</title>
+  <title>VSCode-like Editor with Monaco</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; }
-    #toolbar {
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Top Bar */
+    .topbar {
       display: flex;
       justify-content: space-between;
-      background-color: #f0f0f0;
+      align-items: center;
+      background-color: #302727;
+      padding: 5px 15px;
+      border-bottom: 1px solid #444;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 200px;
+      background-color: #252526;
       padding: 10px;
-      border-bottom: 1px solid #ccc;
+      height: 100vh;
+      overflow-y: auto;
     }
-    button { margin: 0 5px; padding: 8px 12px; }
-    #fileList {
-      height: 20vh; 
-      overflow-y: scroll; 
-      border: 1px solid #ccc; 
-      margin-top: 5px;
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
     }
+
+    .sidebar li {
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar li:hover {
+      background-color: #404040;
+    }
+
+    /* Main Editor Area */
+    .editor-container {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
     #container {
-      width: 100%; 
-      height: 70vh; 
-      border: 1px solid #ccc; 
-      margin-top: 5px;
+      flex: 1;
+      border-top: 1px solid #444;
+    }
+
+    /* Bottom Status Bar */
+    .statusbar {
+      background-color: #007acc;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    button {
+      background-color: #2b3033;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-right: 5px;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .rename-btn {
+      background-color: #ff9800;
+      color: white;
+      border: none;
+      padding: 5px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .rename-btn:hover {
+      background-color: #e68900;
     }
   </style>
 </head>
 <body>
-  <div id="toolbar">
-    <div>
-      <button id="openFolderBtn">Open Folder</button>
-      <button id="saveBtn">Save File</button>
-    </div>
-    <div id="fileName" style="align-self: center;">No file opened</div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3>Explorer</h3>
+    <ul id="fileList"></ul>
   </div>
-  <ul id="fileList"></ul>
-  <div id="container"></div>
 
+  <!-- Main Editor Container -->
+  <div class="container">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div id="fileName">!</div>
+      <div>
+        <a href="./index.html" >    <button>mamu</button></a>
+        <button id="openFolderBtn">Open Folder</button>
+        <button id="saveBtn">Save File</button>
+        <button id="newFileBtn">New File</button> <!-- Add this button -->
+      </div>
+    </div>
+
+    <!-- Monaco Editor -->
+    <div class="editor-container">
+      <div id="container"></div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <div class="statusbar">
+      <div>Status: ok Plugins: home system , web pro run</div>
+      <div>Language: .html</div>
+    </div>
+  </div>
+
+  <!-- Monaco Editor Script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.10.1/min/vs/loader.js"></script>
   <script>
     let editor;
@@ -47,8 +151,9 @@
     require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.10.1/min/vs' } });
     require(['vs/editor/editor.main'], function() {
       editor = monaco.editor.create(document.getElementById('container'), {
-        value: '<!-- Start typing your HTML here -->',
+        value: ' ',
         language: 'html',
+        theme: 'vs-dark',
         automaticLayout: true
       });
 
@@ -57,6 +162,7 @@
       });
     });
 
+    // Folder Handling Logic
     document.getElementById('openFolderBtn').addEventListener('click', async () => {
       try {
         folderHandle = await window.showDirectoryPicker();
@@ -74,7 +180,13 @@
         if (handle.kind === 'file') {
           const listItem = document.createElement('li');
           listItem.textContent = name;
-          listItem.style.cursor = 'pointer';
+
+          const renameButton = document.createElement('button');
+          renameButton.textContent = 'Rename';
+          renameButton.classList.add('rename-btn');
+          renameButton.addEventListener('click', () => renameFile(name, handle));
+
+          listItem.appendChild(renameButton);
           listItem.addEventListener('click', () => openFile(handle, name));
           fileList.appendChild(listItem);
         }
@@ -93,6 +205,7 @@
       }
     }
 
+    // Save Functionality
     document.getElementById('saveBtn').addEventListener('click', saveFile);
 
     async function saveFile() {
@@ -111,15 +224,55 @@
     }
 
     async function autoSave() {
+      if (!currentFileHandle) return;
       try {
         const writable = await currentFileHandle.createWritable();
         await writable.write(editor.getValue());
         await writable.close();
-        console.log('Autosave completed');  // Log for autosave
+        console.log('Autosave completed');
       } catch (err) {
         console.error('Error in autosave:', err);
+      }
+    }
+
+    document.getElementById('newFileBtn').addEventListener('click', createNewFile);
+
+    async function createNewFile() {
+      const fileName = prompt('Enter the new file name:', 'untitled.html');
+      if (!fileName) return; 
+
+      editor.setValue(''); 
+      document.getElementById('fileName').textContent = fileName;
+
+      currentFileHandle = {
+        name: fileName,
+        writable: null,
+        isNew: true, 
+      };
+
+      const fileList = document.getElementById('fileList');
+      const listItem = document.createElement('li');
+      listItem.textContent = fileName;
+      listItem.style.cursor = 'pointer';
+      listItem.addEventListener('click', () => openFile(currentFileHandle, fileName));
+      fileList.appendChild(listItem);
+    }
+
+    async function renameFile(currentName, fileHandle) {
+      const newName = prompt('Enter new name:', currentName);
+      if (!newName || newName === currentName) return;
+
+      try {
+        const newHandle = await folderHandle.getFileHandle(newName, { create: false });
+        alert('File with the same name already exists!');
+      } catch (err) {
+        // No file exists with the new name, proceed with renaming
+        await fileHandle.rename(newName);
+        displayFolderContents(folderHandle);
+        alert('File renamed successfully!');
       }
     }
   </script>
 </body>
 </html>
+ 
