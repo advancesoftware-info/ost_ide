@@ -1,21 +1,29 @@
-The MIT License (MIT)
+     License Conditions advancesoftware 1.0.0
+                          Permissions
+               Attribution of License and Copyright
+               Users must provide proper attribution for 
+               the license and copyright as specified in 
+               the documentation or product.
 
-Copyright (c) 2016 - present Microsoft Corporation
+                         Commercial Use
+               Permission is granted to use this product for 
+               commercial purposes, such as selling related 
+               goods or services.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+                          Modification
+               Users are allowed to modify 
+               or adapt the product as needed.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+                          Personal Use
+               This product can be used 
+               for personal purposes.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+                          Distribution
+        Users may distribute or share this product,
+         provided they comply with the license terms.
+
+                         Limitations
+                     Not for Direct Sale
+            This product cannot be sold dire
+            ctly but can be incorporated into other 
+             services or products in compliance with the terms.
